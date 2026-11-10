@@ -193,4 +193,100 @@ public:
         
         return dummy.next;
     }
+
+    void moveSegmentBeforeElement(int segStart, int segEnd, int element){
+        SLLNode<T>* tren=head;
+        SLLNode<T>* pred=nullptr;
+        SLLNode<T>* start=nullptr;
+        SLLNode<T>* end=nullptr;
+        SLLNode<T>* prevStart=nullptr;
+        SLLNode<T>* prevElem=nullptr;
+        SLLNode<T>* elem=nullptr;
+
+        //  * * * * *
+        //  1 2 3 4 5 6 7 
+        //  1 2 6 3 4 5 7
+
+
+        while(tren!=nullptr){
+            
+            if(tren->info==segStart){
+                start=tren;
+                prevStart=pred;
+            }
+            if(tren->info==segEnd){
+                end=tren;
+                SLLNode<T>*pom = end->next;
+                if(pom->info==element){
+                    return;
+                }
+            }
+            if(tren->info==element){
+                elem=tren;
+                prevElem=pred;
+            }
+            pred=tren;
+            tren=tren->next;
+        }   
+           
+            /*
+
+            WALL OF SHAME:
+            1 2 3 4 5 6 7
+            (3,5,2)
+            1 3 5 2 6 7
+
+            3=start, 5=end 2=elem
+
+            end->next=elem ~ 6->2
+            prevStart->next=prevElem ~ 2 1
+            prevElem->next=start ~ 1->3
+
+            end->next=elem; 
+            prevStart->next=prevElem;
+            prevElem->next=start;
+
+            */  
+
+
+            prevStart->next = end->next;     
+            end->next = elem;                
+            prevElem->next = start; 
+    }
+
+
+    //januar 2025
+    void partitionList(Node** head, int pivot){
+
+        SLLNode<T> dummyA;
+        SLLNode<T> dummyB;
+
+        SLLNode<T>* repA=&dummyA;
+        SLLNode<T>* repB=&dummyB;
+
+        SLLNode<T>* tren=*head;
+
+        while(tren!=nullptr){
+
+            SLLNode<T>* sledeci=tren->next;
+
+            if(tren->info<pivot){
+
+                repA->next=tren;
+                repA=tren;
+            }else{
+                repB->next=tren;
+                repB=tren;
+            }
+
+            tren=sledeci;
+        }
+
+        repB->next=nullptr;
+
+        repA->next=dummyB.next;
+
+        *head=dummyA.next;
+
+    }
 };
